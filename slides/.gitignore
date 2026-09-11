@@ -1,0 +1,5 @@
+node_modules
+dist
+.output
+components.d.ts
+.local
