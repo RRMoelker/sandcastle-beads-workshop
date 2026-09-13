@@ -1,4 +1,23 @@
 ---
+
+---
+## Why not sub agents
+
+### Custom orchestration
+* **Parallel workers**
+* **Control merge process**
+* Sandbox
+* External TODO list / tickets
+* More control
+
+::right::
+
+### Sub agents
+* Simpler
+* Lot less work
+* Orchestration as prompt
+
+---
 hideInToc: true
 ---
 

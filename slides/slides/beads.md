@@ -96,7 +96,7 @@ Started by **Steve Yegge**.
 - Born out of large vibe-coding projects
 - Work that gets too complex gets flagged **"rewrite only"**
 - Agents drift into "**executive mode**" near the end of the context window and take shortcuts to a solution
-- 
+- `beads-ui` to see what is happening.
 
 </v-clicks>
 

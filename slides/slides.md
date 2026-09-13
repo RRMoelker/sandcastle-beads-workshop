@@ -26,7 +26,7 @@ src: ./slides/intro.md
 
 
 ---
-src: ./slides/sandcastle/sandcastle.md
+src: ./slides/sandcastle/index.md
 ---
 
 

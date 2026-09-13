@@ -1,38 +1,3 @@
-
-
-
----
-layout: section
----
-
-# Why SandcastleAI
-
-
-
----
-
-1. Permission nag or `--dangerously-skip-permissions`
-2. Orchestrating your workflow is pretty clearly the next step up.
-
-<!-- Why use sandcastle?
-Because you either get way to many nags, or have to accept nearly unnaccetable risks.
--->
-
-
-
----
-layout: section
----
-
-# Sandcastle intro
-
-
-
----
-
-<!-- TODO: info from https://github.com/mattpocock/sandcastle -->
-
-
 ## Sandcastle templates
 
 There are a couple of defaults to choose from, each `npx @ai-hero/sandcastle init .` scaffolds a `.sandcastle/main.mts` orchestration script plus prompt files.
@@ -40,6 +5,7 @@ There are a couple of defaults to choose from, each `npx @ai-hero/sandcastle ini
 <!--
 Source: https://github.com/mattpocock/sandcastle/tree/main/src/templates
 -->
+
 
 
 
@@ -194,80 +160,3 @@ Plans parallelizable issues, executes with per-branch review, merges.
 Each issue gets its own sandbox — implementer runs first, reviewer only runs if commits were made, same branch.
 Combines the review gate of sequential-reviewer with the concurrency of parallel-planner.
 -->
-
-
-
----
-layout: section
----
-
-## My template experience
-
-
-
----
-
-### Sequential reviewer
-
-* One iteration even when stating "Break down problem into smaller chunks"
-* Code not in main after run
-  * Required `git merge sandcastle/sequential-reviewer/1789296860039`
-
-*Screenshot pending.*
-
-<!--
-MISSING IMAGE: sequential-reviewer-run.png (no such file found in public/sandcastle/ or elsewhere).
-Once captured, drop it in public/sandcastle/ and add `layout: image-right` +
-`image: /sandcastle/sequential-reviewer-run.png` to this slide's frontmatter.
--->
-
-
-
----
-
-### Sequential reviewer result
-
-*Screenshot pending.*
-
-<!--
-MISSING IMAGE: sequential-reviewer-result.png (no such file found in public/sandcastle/ or elsewhere).
-Once captured, drop it in public/sandcastle/ and reference with
-`![](/sandcastle/sequential-reviewer-result.png)`.
--->
-
-
-
----
-layout: image-right
-image: /sandcastle/parallel-planner-wip-cli.png
-backgroundSize: contain
----
-
-### Parallel planner
-
-* "Branches merged", no manual merge
-
-<!-- https://github.com/RRMoelker/sandcastle-experiment-3 -->
-
-
-
----
-layout: image-right
-image: /sandcastle/parallel-planner-wip-tickets.png
-backgroundSize: contain
----
-
-* New tickets by my request
-  * "As requested, broke the remaining work into smaller tickets rather than building the full game in this pass:"
-
-
-
----
-layout: two-cols
----
-
-![](/sandcastle/parallel-planner-result.png)
-
-::right::
-
-![](/sandcastle/parallel-planner-result-cli.png)
