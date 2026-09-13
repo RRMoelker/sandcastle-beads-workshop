@@ -1,28 +1,37 @@
+
+
+
 ---
-hideInToc: true
+layout: section
 ---
 
-# Testimonials
+# Why SandcastleAI
 
-<div class="text-sm">
 
-> I've worked with Beads for less than a week, but the difference from markdown-based TODO tracking is **profound**…
->
-> Markdown plans are **write-only memory for agents**… dependencies exist only in prose… I can't query for ready work, I have to *interpret* text…
->
-> **Dependencies are first-class, not prose.** I run `bd ready --json` and get a definitive list of unblocked work… I'm not interpreting text, I'm *querying structured data*…
->
-> Beads isn't "issue tracking for agents" — it's **external memory for agents**…
->
-> Going back to markdown TODOs feels like trying to remember a phone number without writing it down… Sure, I can do it for a little while, but why would I?
->
-> **— Sonnet 4.5**
 
-</div>
+---
 
-<!--
-Full text: see .local/slide_input.md, Appendix A
+1. Permission nag or `--dangerously-skip-permissions`
+2. Orchestrating your workflow is pretty clearly the next step up.
+
+<!-- Why use sandcastle?
+Because you either get way to many nags, or have to accept nearly unnaccetable risks.
 -->
+
+
+
+---
+layout: section
+---
+
+# Sandcastle intro
+
+
+
+---
+
+<!-- TODO: info from https://github.com/mattpocock/sandcastle -->
+
 
 ## Sandcastle templates
 
@@ -32,8 +41,8 @@ There are a couple of defaults to choose from, each `npx @ai-hero/sandcastle ini
 Source: https://github.com/mattpocock/sandcastle/tree/main/src/templates
 -->
 
----
-hideInToc: true
+
+
 ---
 
 ## blank
@@ -56,8 +65,8 @@ Bare scaffold — write your own prompt and orchestration.
 Single run, maxIterations: 1 by default, no branch/merge logic — you own everything.
 -->
 
----
-hideInToc: true
+
+
 ---
 
 ## simple-loop
@@ -82,8 +91,8 @@ Picks issues one by one and closes them.
 maxIterations: 3+, branchStrategy: merge-to-head — each iteration works one issue and merges straight back to HEAD.
 -->
 
----
-hideInToc: true
+
+
 ---
 
 ## sequential-reviewer
@@ -111,8 +120,8 @@ Implements issues one by one, with a code review step after each.
 Loop stops early once an implement phase produces no commits (backlog empty).
 -->
 
----
-hideInToc: true
+
+
 ---
 
 ## parallel-planner
@@ -147,8 +156,8 @@ Implementers run concurrently via Promise.allSettled — one failing agent doesn
 Only branches with commits are passed to the merger; loop repeats to pick up newly unblocked issues.
 -->
 
----
-hideInToc: true
+
+
 ---
 
 ## parallel-planner-with-review
@@ -186,12 +195,15 @@ Each issue gets its own sandbox — implementer runs first, reviewer only runs i
 Combines the review gate of sequential-reviewer with the concurrency of parallel-planner.
 -->
 
+
+
 ---
-hideInToc: true
 layout: section
 ---
 
 ## My template experience
+
+
 
 ---
 
@@ -209,6 +221,8 @@ Once captured, drop it in public/sandcastle/ and add `layout: image-right` +
 `image: /sandcastle/sequential-reviewer-run.png` to this slide's frontmatter.
 -->
 
+
+
 ---
 
 ### Sequential reviewer result
@@ -221,9 +235,12 @@ Once captured, drop it in public/sandcastle/ and reference with
 `![](/sandcastle/sequential-reviewer-result.png)`.
 -->
 
+
+
 ---
 layout: image-right
 image: /sandcastle/parallel-planner-wip-cli.png
+backgroundSize: contain
 ---
 
 ### Parallel planner
@@ -232,13 +249,18 @@ image: /sandcastle/parallel-planner-wip-cli.png
 
 <!-- https://github.com/RRMoelker/sandcastle-experiment-3 -->
 
+
+
 ---
 layout: image-right
 image: /sandcastle/parallel-planner-wip-tickets.png
+backgroundSize: contain
 ---
 
-* Tickets my doing, not necesarry related to parallel planner template:
+* New tickets by my request
   * "As requested, broke the remaining work into smaller tickets rather than building the full game in this pass:"
+
+
 
 ---
 layout: two-cols

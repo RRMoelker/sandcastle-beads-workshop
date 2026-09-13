@@ -1,12 +1,9 @@
 ---
 layout: section
-level: 2
 ---
 
 # Beads
 
----
-hideInToc: true
 ---
 
 ## Beads: the story
@@ -31,10 +28,8 @@ Source: https://steve-yegge.medium.com/introducing-beads-a-coding-agent-memory-s
 -->
 
 ---
-hideInToc: true
----
 
-# Phase 1
+## Phase 1
 
 The agent works through it. ✅ Done.
 
@@ -47,10 +42,8 @@ TODO
 -->
 
 ---
-hideInToc: true
----
 
-# Phase 2
+## Phase 2
 
 Also done. ✅
 
@@ -63,10 +56,8 @@ TODO
 -->
 
 ---
-hideInToc: true
----
 
-# Phase 3
+## Phase 3
 
 The agent wakes up. It has mostly **forgotten where it came from**.
 
@@ -87,10 +78,8 @@ TODO
 -->
 
 ---
-hideInToc: true
----
 
-# What Beads provides
+## What Beads provides
 
 Started by **Steve Yegge**.
 
@@ -113,4 +102,27 @@ Started by **Steve Yegge**.
 
 <!--
 TODO: find images — beads logo? generic AI images? something specific to the site's case
+-->
+---
+
+## Testimonials
+
+<div class="text-sm">
+
+> I've worked with Beads for less than a week, but the difference from markdown-based TODO tracking is **profound**…
+>
+> Markdown plans are **write-only memory for agents**… dependencies exist only in prose… I can't query for ready work, I have to *interpret* text…
+>
+> **Dependencies are first-class, not prose.** I run `bd ready --json` and get a definitive list of unblocked work… I'm not interpreting text, I'm *querying structured data*…
+>
+> Beads isn't "issue tracking for agents" — it's **external memory for agents**…
+>
+> Going back to markdown TODOs feels like trying to remember a phone number without writing it down… Sure, I can do it for a little while, but why would I?
+>
+> **— Sonnet 4.5**
+
+</div>
+
+<!--
+Full text: see .local/slide_input.md, Appendix A
 -->

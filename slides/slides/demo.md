@@ -4,16 +4,17 @@ layout: section
 
 # Demo time
 
----
-hideInToc: true
+
+
 ---
 
 ## Demo config
 
 <RunnerConfig />
 
+
+
 ---
-hideInToc: true
 runnable: true
 layout: two-cols
 ---
@@ -31,6 +32,8 @@ layout: two-cols
 show repo after empty template init and show main code with github copilot.
 show repo prompts with sequential reviewer and show main code.
 -->
+
+
 
 ---
 runnable: true
@@ -56,6 +59,7 @@ InitService.ts) — it never pushes or opens PRs, so Issues + Metadata is enough
 -->
 
 
+
 ---
 runnable: true
 layout: two-cols
@@ -66,6 +70,8 @@ layout: two-cols
 * `cp .sandcastle/.env{.example,}`
 * Get token using `claude setup-token`
 * edit `.sandcastle/.env`: `CLAUDE_CODE_OAUTH_TOKEN=<token>`
+
+
 
 ---
 runnable: true
@@ -83,6 +89,8 @@ npm warn install-scripts
 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
 ```
 
+
+
 ---
 runnable: true
 layout: two-cols
@@ -92,6 +100,8 @@ layout: two-cols
 
 * https://beads.gascity.com/
 * e.g.: `brew install beads`
+
+
 
 ---
 runnable: true
@@ -111,6 +121,8 @@ layout: two-cols
 
 ![](../../../../../../../Users/r/Desktop/beads-install-success.png)
 
+
+
 ---
 
 ## 5. Add starting ticket
@@ -118,6 +130,8 @@ layout: two-cols
 * Agent swarm will use `bd ready --json`
 * Provide source work with:
   * `npm i beads-ui -g`
+
+
 
 ---
 
@@ -132,17 +146,19 @@ const copyToWorktree = ["node_modules", ".beads"];
   * `npx tsx .sandcastle/main.mts`
 * 
 
+
+
 ---
 layout: section
 ---
 
 # Try it out
 
----
-hideInToc: true
+
+
 ---
 
-# Goal
+## Goal
 
 * Think of a small app, or
 * An extension of your current project

@@ -6,8 +6,8 @@ hideInToc: true
 
 - Beads introduction: https://steve-yegge.medium.com/introducing-beads-a-coding-agent-memory-system-637d7d92514a
 
----
-hideInToc: true
+
+
 ---
 
 ## Enabling the demo runner
