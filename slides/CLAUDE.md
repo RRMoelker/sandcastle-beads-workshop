@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## Dev server
+
+Run the dev server with `npm run dev`. It starts without opening a browser (no `--open` flag).
+
 ## Slide spacing convention
 
 Every slide in `slides.md` and the included `slides/*.md` files must be spaced like this:
