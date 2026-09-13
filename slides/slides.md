@@ -1,10 +1,15 @@
 ---
-theme: "@dignitas/slidev-theme"
-title: SandcastleAI
-info: |
-  SandcastleAI training — general layout, then content.
+theme: '@dignitas/slidev-theme'
+title: Sandcastle
 hideInToc: true
 ---
+
+::title::
+LLM Orchestration
+with Sandcastle
+
+::subtitle::
+Ruurd Moelker, 13 september 2026
 
 ---
 src: ./slides/intro.md
@@ -15,7 +20,7 @@ src: ./slides/beads.md
 ---
 
 ---
-src: ./slides/sandcastle.md
+src: ./slides/sandcastle/sandcastle.md
 ---
 
 ---

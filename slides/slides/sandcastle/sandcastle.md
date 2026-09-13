@@ -155,12 +155,12 @@ hideInToc: true
 
 ```mermaid
 flowchart LR
-  M0(["main.ts"]) --> P["planner<br/>(opus)"]
-  P --> B1["implementer<br/>(sonnet)"]
-  B1 --> R1["reviewer<br/>(sonnet)"]
-  P --> B2["implementer<br/>(sonnet)"]
-  B2 --> R2["reviewer<br/>(sonnet)"]
-  R1 --> MG["merger<br/>(sonnet)"]
+  M0(["main.ts"]) --> P["planner"]
+  P --> B1["implementer"]
+  B1 --> R1["reviewer"]
+  P --> B2["implementer"]
+  B2 --> R2["reviewer"]
+  R1 --> MG["merger"]
   R2 --> MG
   MG --> P
 
@@ -197,38 +197,55 @@ layout: section
 
 ### Sequential reviewer
 
-TODO: AI, add side by side slide, image: sequential-reviewer-run.png
-
 * One iteration even when stating "Break down problem into smaller chunks"
 * Code not in main after run
   * Required `git merge sandcastle/sequential-reviewer/1789296860039`
+
+*Screenshot pending.*
+
+<!--
+MISSING IMAGE: sequential-reviewer-run.png (no such file found in public/sandcastle/ or elsewhere).
+Once captured, drop it in public/sandcastle/ and add `layout: image-right` +
+`image: /sandcastle/sequential-reviewer-run.png` to this slide's frontmatter.
+-->
 
 ---
 
 ### Sequential reviewer result
 
-TODO: ai, add image sequential-reviewer-result.png
+*Screenshot pending.*
 
+<!--
+MISSING IMAGE: sequential-reviewer-result.png (no such file found in public/sandcastle/ or elsewhere).
+Once captured, drop it in public/sandcastle/ and reference with
+`![](/sandcastle/sequential-reviewer-result.png)`.
+-->
+
+---
+layout: image-right
+image: /sandcastle/parallel-planner-wip-cli.png
 ---
 
 ### Parallel planner
-
-TODO: ai, add image on the right side: parallel-planner-wip-cli
-
 
 * "Branches merged", no manual merge
 
 <!-- https://github.com/RRMoelker/sandcastle-experiment-3 -->
 
 ---
-
-TODO: ai, add image parallel-planner-wip-tickets
+layout: image-right
+image: /sandcastle/parallel-planner-wip-tickets.png
+---
 
 * Tickets my doing, not necesarry related to parallel planner template:
   * "As requested, broke the remaining work into smaller tickets rather than building the full game in this pass:"
 
 ---
+layout: two-cols
+---
 
-TODO: ai, add image parallel-planner-result
-TODO: ai add parallel-planner-result-cli.png
-TODO: AI try to put both image on this slide
+![](/sandcastle/parallel-planner-result.png)
+
+::right::
+
+![](/sandcastle/parallel-planner-result-cli.png)

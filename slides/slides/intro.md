@@ -1,9 +1,3 @@
-::title::
-SandcastleAI
-
-::subtitle::
-18 september 2026
-Ruurd Moelker
 
 ---
 hideInToc: true
