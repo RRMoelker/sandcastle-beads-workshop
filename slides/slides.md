@@ -206,9 +206,16 @@ hideInToc: true
 
 ```mermaid
 flowchart LR
-  A(["npx sandcastle"]) --> B["agent<br/>(opus)"]
+  A(["main.ts"]) --> B["agent"]
+  IP[/"prompt.md"/] -.-> B
   B --> C(["done"])
+
+  subgraph SB["sandbox"]
+    B
+  end
 ```
+
+* Prompt is empty boilerplate.
 
 <!--
 Bare scaffold — write your own prompt and orchestration.
@@ -223,11 +230,18 @@ hideInToc: true
 
 ```mermaid
 flowchart LR
-  A(["npx sandcastle"]) --> B["agent<br/>(sonnet)"]
+  A(["main.ts"]) --> B["agent"]
+  IP[/"prompt.md"/] -.-> B
   B --> C{"issues left?"}
   C -- yes --> B
   C -- no --> D(["done"])
+
+  subgraph SB["sandbox"]
+    B
+  end
 ```
+
+* Prompt reads the next issue via `bd ready --json`.
 
 <!--
 Picks issues one by one and closes them.
@@ -242,16 +256,24 @@ hideInToc: true
 
 ```mermaid
 flowchart LR
-  A(["issue picked"]) --> B["implementer<br/>(sonnet)"]
+  A(["main.ts"]) --> B["implementer"]
+  IP[/"implement-prompt.md"/] -.-> B
   B --> C{"commits made?"}
   C -- no --> D(["stop"])
-  C -- yes --> E["reviewer<br/>(sonnet)"]
-  E --> A
+  C -- yes --> E["reviewer"]
+  RP[/"review-prompt.md"/] -.-> E
+  E -- "next issue" --> B
+
+  subgraph SB["sandbox"]
+    B
+    E
+  end
 ```
+
+* Each phase is still a **new Claude session** — implementer and reviewer don't share conversation context, only the branch's files/commits.
 
 <!--
 Implements issues one by one, with a code review step after each.
-Implementer and reviewer share one sandbox instance and branch, so the reviewer can fix issues directly on top.
 Loop stops early once an implement phase produces no commits (backlog empty).
 -->
 
@@ -263,13 +285,25 @@ hideInToc: true
 
 ```mermaid
 flowchart LR
-  P["planner<br/>(opus)"] --> E1["implementer<br/>(sonnet)"]
-  P --> E2["implementer<br/>(sonnet)"]
-  P --> E3["implementer<br/>(sonnet)"]
-  E1 --> M["merger<br/>(sonnet)"]
-  E2 --> M
-  E3 --> M
-  M --> P
+  M0(["main.ts"]) --> P["planner"]
+  P --> E1["implementer"]
+  P --> EN["implementer"]
+  E1 --> MG["merger"]
+  EN --> MG
+  MG --> P
+
+  subgraph SP["sandbox"]
+    P
+  end
+  subgraph S1["sandbox"]
+    E1
+  end
+  subgraph S2["sandbox"]
+    EN
+  end
+  subgraph SM["sandbox"]
+    MG
+  end
 ```
 
 <!--
@@ -287,13 +321,29 @@ hideInToc: true
 
 ```mermaid
 flowchart LR
-  P["planner<br/>(opus)"] --> B1["implementer<br/>(sonnet)"]
+  M0(["main.ts"]) --> P["planner<br/>(opus)"]
+  P --> B1["implementer<br/>(sonnet)"]
   B1 --> R1["reviewer<br/>(sonnet)"]
   P --> B2["implementer<br/>(sonnet)"]
   B2 --> R2["reviewer<br/>(sonnet)"]
-  R1 --> M["merger<br/>(sonnet)"]
-  R2 --> M
-  M --> P
+  R1 --> MG["merger<br/>(sonnet)"]
+  R2 --> MG
+  MG --> P
+
+  subgraph SP["sandbox"]
+    P
+  end
+  subgraph S1["sandbox"]
+    B1
+    R1
+  end
+  subgraph S2["sandbox"]
+    B2
+    R2
+  end
+  subgraph SM["sandbox"]
+    MG
+  end
 ```
 
 <!--
@@ -326,6 +376,28 @@ TODO: AI, add side by side slide, image: sequential-reviewer-run.png
 TODO: ai, add image sequential-reviewer-result.png
 
 ---
+
+### Parallel planner
+
+TODO: ai, add image on the right side: parallel-planner-wip-cli
+
+
+* "Branches merged", no manual merge
+
+<!-- https://github.com/RRMoelker/sandcastle-experiment-3 -->
+
+---
+
+TODO: ai, add image parallel-planner-wip-tickets
+
+* Tickets my doing, not necesarry related to parallel planner template:
+  * "As requested, broke the remaining work into smaller tickets rather than building the full game in this pass:"
+
+---
+
+TODO: ai, add image parallel-planner-result
+
+---
 layout: section
 ---
 
@@ -351,12 +423,8 @@ layout: two-cols
 * `npm init`
 * `npm install --save-dev @ai-hero/sandcastle`
 * `npx @ai-hero/sandcastle init` with
-  * github copilot
-  * empty template
-* Reset
-* `npx @ai-hero/sandcastle init` with
   * claude
-  * sequential-reviewer
+  * template of choice
     
 <!--
 show repo after empty template init and show main code with github copilot.
@@ -442,12 +510,15 @@ layout: two-cols
 
 ![](../../../../../../Users/r/Desktop/beads-install-success.png)
 
+---
+
 ## 5. Add starting ticket
 
 * Agent swarm will use `bd ready --json`
 * Provide source work with:
   * `npm i beads-ui -g`
 
+---
 
 ## 6. Kick off Sandcastle
 
