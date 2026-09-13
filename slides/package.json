@@ -10,5 +10,11 @@
   "devDependencies": {
     "@dignitas/slidev-theme": "file:../../dignitas-se-slidev-theme",
     "@slidev/cli": "^52.14.1"
+  },
+  "dependencies": {
+    "approve": "^0.0.12"
+  },
+  "allowScripts": {
+    "@beads/bd@1.2.2": true
   }
 }
