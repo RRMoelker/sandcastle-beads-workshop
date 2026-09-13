@@ -183,26 +183,138 @@ Full text: see .local/slide_input.md, Appendix A
 
 ## Sandcastle templates
 
-There a couple of defaults to choose from:
+There are a couple of defaults to choose from, each `npx @ai-hero/sandcastle init .` scaffolds a `.sandcastle/main.mts` orchestration script plus prompt files.
 
-* blank (Bare scaffold — write your own prompt and orchestration)
-
-[//]: # (TODO: AI)
-TODO: AI, split these options over multiple slide. Start with this slide create a nice flow diagram for the following templates, look in the repo how these templates actually work: https://github.com/mattpocock/sandcastle 
-
-* simple-loop (Picks issues one by one and closes them)
-* sequential-reviewer (Implements issues one by one, with a code review step after each)
-* parallel-planner (Plans parallelizable issues, executes on separate branches, merges)
-* parallel-planner-with-review (Plans parallelizable issues, executes with per-branch review, merges)
-[//]: # (End TODO: AI)
+<!--
+Source: https://github.com/mattpocock/sandcastle/tree/main/src/templates
+-->
 
 ---
 hideInToc: true
 ---
 
-# Resources
+## blank
 
-- Beads introduction: https://steve-yegge.medium.com/introducing-beads-a-coding-agent-memory-system-637d7d92514a
+```mermaid
+flowchart LR
+  A(["npx sandcastle"]) --> B["agent<br/>(opus)"]
+  B --> C(["done"])
+```
+
+<!--
+Bare scaffold — write your own prompt and orchestration.
+Single run, maxIterations: 1 by default, no branch/merge logic — you own everything.
+-->
+
+---
+hideInToc: true
+---
+
+## simple-loop
+
+```mermaid
+flowchart LR
+  A(["npx sandcastle"]) --> B["agent<br/>(sonnet)"]
+  B --> C{"issues left?"}
+  C -- yes --> B
+  C -- no --> D(["done"])
+```
+
+<!--
+Picks issues one by one and closes them.
+maxIterations: 3+, branchStrategy: merge-to-head — each iteration works one issue and merges straight back to HEAD.
+-->
+
+---
+hideInToc: true
+---
+
+## sequential-reviewer
+
+```mermaid
+flowchart LR
+  A(["issue picked"]) --> B["implementer<br/>(sonnet)"]
+  B --> C{"commits made?"}
+  C -- no --> D(["stop"])
+  C -- yes --> E["reviewer<br/>(sonnet)"]
+  E --> A
+```
+
+<!--
+Implements issues one by one, with a code review step after each.
+Implementer and reviewer share one sandbox instance and branch, so the reviewer can fix issues directly on top.
+Loop stops early once an implement phase produces no commits (backlog empty).
+-->
+
+---
+hideInToc: true
+---
+
+## parallel-planner
+
+```mermaid
+flowchart LR
+  P["planner<br/>(opus)"] --> E1["implementer<br/>(sonnet)"]
+  P --> E2["implementer<br/>(sonnet)"]
+  P --> E3["implementer<br/>(sonnet)"]
+  E1 --> M["merger<br/>(sonnet)"]
+  E2 --> M
+  E3 --> M
+  M --> P
+```
+
+<!--
+Plans parallelizable issues, executes on separate branches, merges.
+Planner outputs a <plan> JSON (issue id, title, target branch) validated with Zod.
+Implementers run concurrently via Promise.allSettled — one failing agent doesn't cancel the others.
+Only branches with commits are passed to the merger; loop repeats to pick up newly unblocked issues.
+-->
+
+---
+hideInToc: true
+---
+
+## parallel-planner-with-review
+
+```mermaid
+flowchart LR
+  P["planner<br/>(opus)"] --> B1["implementer<br/>(sonnet)"]
+  B1 --> R1["reviewer<br/>(sonnet)"]
+  P --> B2["implementer<br/>(sonnet)"]
+  B2 --> R2["reviewer<br/>(sonnet)"]
+  R1 --> M["merger<br/>(sonnet)"]
+  R2 --> M
+  M --> P
+```
+
+<!--
+Plans parallelizable issues, executes with per-branch review, merges.
+Each issue gets its own sandbox — implementer runs first, reviewer only runs if commits were made, same branch.
+Combines the review gate of sequential-reviewer with the concurrency of parallel-planner.
+-->
+
+---
+hideInToc: true
+layout: section
+---
+
+## My template experience
+
+---
+
+### Sequential reviewer
+
+TODO: AI, add side by side slide, image: sequential-reviewer-run.png
+
+* One iteration even when stating "Break down problem into smaller chunks"
+* Code not in main after run
+  * Required `git merge sandcastle/sequential-reviewer/1789296860039`
+
+---
+
+### Sequential reviewer result
+
+TODO: ai, add image sequential-reviewer-result.png
 
 ---
 layout: section
@@ -217,6 +329,7 @@ hideInToc: true
 ## 1, Setup 
 
 * `git init`
+* `npm init`
 * `npm install --save-dev @ai-hero/sandcastle`
 * `npx @ai-hero/sandcastle init` with
   * github copilot
@@ -233,11 +346,32 @@ show repo prompts with sequential reviewer and show main code.
 
 ---
 
-## 2, Config
+## x, Ticket system, GH issues
+
+1. Create fine-grained GitHub PAT: https://github.com/settings/personal-access-tokens/new
+2. Repository access: select the target repo(s) individually — no name-pattern/wildcard scoping
+3. Permissions:
+   * Issues: Read and write
+   * Metadata: Read-only (mandatory, auto-selected)
+4. `GH_TOKEN=<token>` in `.sandcastle/.env`
+5. Create Github repo and add origin
+   1. `git remote add origin <github_repo>`
+   2. `git push --set-upstream origin main`
+
+<!--
+Sandcastle's github-issues tracker only shells out to `gh issue list/view/close` (see
+InitService.ts) — it never pushes or opens PRs, so Issues + Metadata is enough. Contents
+(read/write) is only needed if your own orchestration pushes branches/PRs to origin.
+-->
+
+
+---
+
+## 2, Config LLM: Claude
 
 * `cp .sandcastle/.env{.example,}`
 * Get token using `claude setup-token`
-* edit .env: `CLAUDE_CODE_OAUTH_TOKEN=<token>`
+* edit `.sandcastle/.env`: `CLAUDE_CODE_OAUTH_TOKEN=<token>`
 
 ---
 
@@ -312,5 +446,15 @@ Then
 * Run through described setup steps
 * Provide initial ticket(s)
 * Run sandcastle loop `npx run sandcastle`
+
+
+---
+hideInToc: true
+---
+
+# Resources
+
+- Beads introduction: https://steve-yegge.medium.com/introducing-beads-a-coding-agent-memory-system-637d7d92514a
+
 
 # Thank you
