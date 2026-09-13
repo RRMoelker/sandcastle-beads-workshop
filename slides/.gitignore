@@ -3,3 +3,4 @@ dist
 .output
 components.d.ts
 .local
+.env

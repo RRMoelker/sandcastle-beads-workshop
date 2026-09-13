@@ -28,6 +28,15 @@ layout: section
 # Why SandcastleAI
 
 ---
+
+1. Permission nag or `--dangerously-skip-permissions`
+2. Orchestrating your workflow is pretty clearly the next step up.
+
+<!-- Why use sandcastle?
+Because you either get way to many nags, or have to accept nearly unnaccetable risks.
+-->
+
+---
 layout: section
 ---
 
@@ -36,7 +45,7 @@ layout: section
 ---
 
 <!-- TODO: info from https://github.com/mattpocock/sandcastle -->
-<!-- See "Beads" section below for what to pull from there. -->
+
 
 ---
 layout: section
@@ -326,6 +335,16 @@ layout: section
 hideInToc: true
 ---
 
+## Demo config
+
+<RunnerConfig />
+
+---
+hideInToc: true
+runnable: true
+layout: two-cols
+---
+
 ## 1, Setup 
 
 * `git init`
@@ -344,6 +363,9 @@ show repo after empty template init and show main code with github copilot.
 show repo prompts with sequential reviewer and show main code.
 -->
 
+---
+runnable: true
+layout: two-cols
 ---
 
 ## x, Ticket system, GH issues
@@ -366,6 +388,9 @@ InitService.ts) — it never pushes or opens PRs, so Issues + Metadata is enough
 
 
 ---
+runnable: true
+layout: two-cols
+---
 
 ## 2, Config LLM: Claude
 
@@ -373,6 +398,9 @@ InitService.ts) — it never pushes or opens PRs, so Issues + Metadata is enough
 * Get token using `claude setup-token`
 * edit `.sandcastle/.env`: `CLAUDE_CODE_OAUTH_TOKEN=<token>`
 
+---
+runnable: true
+layout: two-cols
 ---
 
 ### 3. Install ticket system; npm installer
@@ -387,12 +415,18 @@ npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install
 ```
 
 ---
+runnable: true
+layout: two-cols
+---
 
 ### 3b. Install ticket system; package manager
 
 * https://beads.gascity.com/
 * e.g.: `brew install beads`
 
+---
+runnable: true
+layout: two-cols
 ---
 
 ### 4. Init tickets system
@@ -456,5 +490,37 @@ hideInToc: true
 
 - Beads introduction: https://steve-yegge.medium.com/introducing-beads-a-coding-agent-memory-system-637d7d92514a
 
+---
+hideInToc: true
+---
+
+## Enabling the demo runner
+
+The run buttons on the Demo time slides are **off by default**. To enable them, set both before starting `npm run dev`:
+
+* `SLIDEV_RUNNER_PARENT_PATH` — the directory demo commands are allowed to run in (and any subdirectory of it)
+* `SLIDEV_RUNNER_SECRET` — a random secret, pasted into the "Demo config" slide to authorize requests
+
+**Option A — exported env vars:**
+
+```bash
+export SLIDEV_RUNNER_PARENT_PATH=/path/to/allowed/parent
+export SLIDEV_RUNNER_SECRET=$(openssl rand -hex 24)
+npm run dev
+```
+
+**Option B — `.env` file** at the project root (already gitignored):
+
+```
+SLIDEV_RUNNER_PARENT_PATH=/path/to/allowed/parent
+SLIDEV_RUNNER_SECRET=<random-secret>
+```
+
+Then paste the same `SLIDEV_RUNNER_SECRET` value into the secret box on the Demo config slide — commands will only run inside `SLIDEV_RUNNER_PARENT_PATH`, and only when both checks pass.
+
+<!--
+Neither var set -> the vite-plugins.ts runner middleware doesn't even register; /__runner/* just 404s
+like any other route, so sharing this deck without these vars set is safe by default.
+-->
 
 # Thank you
