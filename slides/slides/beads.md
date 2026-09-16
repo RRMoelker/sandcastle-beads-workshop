@@ -140,3 +140,96 @@ TODO: find images — beads logo? generic AI images? something specific to the s
 <!--
 Full text: see .local/slide_input.md, Appendix A
 -->
+
+
+
+---
+
+## Beads &lt;&gt; Sandcastle: the intended way
+
+**One task graph, many workers.**
+
+<v-clicks>
+
+- The orchestrator owns the beads database — it is the shared memory
+- Sandcastle fans out: each agent gets its own **git worktree in its own sandbox**
+- Workers pull their assignment from the *same* graph: `bd ready --claim --json`
+- `--claim` is **atomic** — first worker wins, no two agents take the same bead
+- Work discovered mid-task goes straight back in as a `discovered-from` bead
+- Fan-in: the orchestrator sees progress live, no merge step
+
+</v-clicks>
+
+<!--
+The claim is the key bit. Everything else you could fake with files; an atomic
+claim across parallel workers you cannot.
+-->
+
+
+
+---
+
+## ...except the sandbox is a detached copy
+
+<v-clicks>
+
+- Normally every git worktree **shares one `.beads/`**, found by walking up to `.git`
+- A sandbox gets a *copy* of the worktree — no main repo, no `.git`, no `.beads`
+- So the worker's very first `bd` call dies:
+
+```
+Error: no beads database found
+...set BEADS_DIR to point to your .beads directory
+```
+
+- Open sandcastle issue [#588](https://github.com/mattpocock/sandcastle/issues/588) — still unsolved, labeled *Documentation*
+
+</v-clicks>
+
+<!--
+This is the honest state of play as of the training: it does not work out of
+the box. Worth showing the error verbatim so people recognise it.
+-->
+
+
+
+---
+
+## The tempting fix that makes it worse
+
+Copy `.beads/issues.jsonl` into the sandbox, copy it back out. 🚫
+
+<v-clicks>
+
+- JSONL is a **passive export**, never the database — the beads docs call this an anti-pattern
+- Import is **upsert-only**: it cannot express a delete, a prune, or a close-by-absence
+- Dolt history, branches and the audit trail don't survive the round trip
+- And offline copies can't claim atomically → two workers take the same bead, and no merge can undo that
+
+</v-clicks>
+
+<!--
+The failure mode is silent: everything looks fine, you just quietly lose
+deletions and get duplicated work.
+-->
+
+
+
+---
+
+## What actually works
+
+<v-clicks>
+
+1. **Shared Dolt server** (recommended) — `dolt sql-server` on the host, workers connect over a bind-mounted unix socket or `host.docker.internal`. Give the worker a minimal server-mode `.beads/` so discovery succeeds. Run workers `--readonly` when they only read, `--sandbox` so they never push.
+2. **Real Dolt sync** — `bd bootstrap` from the Dolt remote at sandbox start, `bd dolt push` at the end. Needs `dolt` in the image and a reachable remote. Right choice for off-machine or untrusted sandboxes.
+3. **Orchestrator writes only** — workers never touch `bd`; sandcastle's structured output goes back to the host, which updates the graph. Least machinery, zero holes in the sandbox.
+
+</v-clicks>
+
+<!--
+Trade-off in one line: a shared server buys you atomic claims and a live graph
+at the cost of a hole in the isolation; copying buys you isolation at the cost
+of a class of coordination bugs merging cannot fix.
+For the demo we use (3) / (1) — pick whichever you actually wired up.
+-->

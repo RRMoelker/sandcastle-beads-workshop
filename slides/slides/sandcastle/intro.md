@@ -13,8 +13,6 @@ layout: section
    3. "better at evaluating than writing"<sup>[1]</sup>
 3. Keep context low
 
-TODO, add image of a prompt injection. Or typo squating supply chain attack.
-
 <div class="mt-4 pt-2 border-t border-gray-500/30 text-xs opacity-60">
 
 [1] Steve Yegge, Beyond Instructions podcast — <a href="https://youtu.be/s96O9oWI_tI?si=tLSN15ZAhhYRbare&t=1046" target="_blank">youtu.be/s96O9oWI_tI</a>
@@ -24,6 +22,20 @@ TODO, add image of a prompt injection. Or typo squating supply chain attack.
 <!-- Why use sandcastle?
 Because you either get way to many nags, or have to accept nearly unacceptable risks.
 -->
+
+
+
+---
+
+**This is not hypothetical:**
+
+<v-clicks>
+
+* [Prompt injection tricked an AI wallet agent into transferring $150k–$200k in tokens](https://www.securityweek.com/prompt-injection-attacks-trick-ai-agents-into-making-crypto-payments/) — Morse-code-encoded X post, May 2026 (same wallet lost $330k to a similar attack in March 2025)
+* [The Shai-Hulud npm worm infected 500+ packages](https://www.csoonline.com/article/4117139/from-typos-to-takeovers-inside-the-industrialization-of-npm-supply-chain-attacks.html) — including `chalk`, `debug`, `strip-ansi` — hunting for crypto wallets, Sept 2025
+* [Mozilla PoC: a clean-looking GitHub repo silently opens a reverse shell in Claude Code](https://cybernews.com/security/claude-code-attack-prompt-injection-mozilla/) — zero malicious code visible in the repo itself
+
+</v-clicks>
 
 
 
