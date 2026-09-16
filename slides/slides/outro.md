@@ -17,6 +17,25 @@
 * Lot less work
 * Orchestration as prompt
 
+
+---
+## Take aways
+
+<v-clicks>
+
+* Sandcastle good for sandboxing
+* Worktrees great for parallel work
+* Beads good for short term work planning
+* My suggestion
+  * Normal work, Claude/OpenCode harnass with Beads Todos
+  * Sandcastle for vibe coding large projects
+</v-clicks>
+
+---
+hideInToc: true
+---
+# Thank you
+
 ---
 hideInToc: true
 ---
@@ -57,5 +76,3 @@ Then paste the same `SLIDEV_RUNNER_SECRET` value into the secret box on the Demo
 Neither var set -> the vite-plugins.ts runner middleware doesn't even register; /__runner/* just 404s
 like any other route, so sharing this deck without these vars set is safe by default.
 -->
-
-# Thank you

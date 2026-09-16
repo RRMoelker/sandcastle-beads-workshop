@@ -148,24 +148,21 @@ const copyToWorktree = ["node_modules", ".beads"];
 
 
 
+## my demo, 
+
+* git clone ...
+* cd example-beads
+* Directly in terminal
+    * `claude`
+    * "Grill me on creating a death rally game, I want the result to be a single issue in beads"
+* `npm run sandcastle`
 
 ---
-layout: section
+## Sandcastle & beads review
+
+* Geen controle na `npm run sandcastle`
+  * Eerste planner maakte niet meerdere issues maar 1 grote.
+* Interuptable na elke planner iteratie
+
 ---
 
-# Try it out
-
-
-
----
-
-## Goal
-
-* Think of a small app, or
-* An extension of your current project
-
-Then
-
-* Run through described setup steps
-* Provide initial ticket(s)
-* Run sandcastle loop `npx run sandcastle`

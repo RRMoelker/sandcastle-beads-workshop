@@ -66,7 +66,10 @@ five templates it ships with, and then we run one live.
 
 * **Matt Pocock** (Total TypeScript / AI Hero) — public since **March 2026**, MIT, ~8k ⭐
 * `npm i -D @ai-hero/sandcastle` — we are on **v0.12.0**
-* A **library**, not a platform: no UI, no daemon, no cloud account
+* A configurable framework. Not a platform: 
+  * no UI
+  * no daemon 
+  * no cloud account
 * Three promises:
   1. You invoke agents with a single `sandcastle.run()`
   2. Sandcastle sandboxes the agent with a configurable **branch strategy**
@@ -109,8 +112,7 @@ await sandcastle.run({
 <v-clicks>
 
 * One `run()` = **one container + one worktree + one fresh agent session**
-* Your orchestration is a plain `.mts` file: `for`, `if`, `Promise.allSettled`
-* Everything above the agent call is **your** code — Sandcastle owns only the box
+* Your orchestration is a plain `.ts` (TypeScript) file: `for`, `if`, `Promise.allSettled`
 
 </v-clicks>
 
@@ -139,6 +141,7 @@ and becomes "what shape should my pipeline be". Which is the actual hard questio
 
 ```bash
 npx @ai-hero/sandcastle init      # agent + sandbox + issue tracker + template
+... # Some setup
 npx tsx .sandcastle/main.mts      # AFK from here
 ```
 
@@ -146,9 +149,6 @@ npx tsx .sandcastle/main.mts      # AFK from here
 
 * One-time: scaffold `.sandcastle/`, build the image, drop a token in `.env`
 * Then it is just **`tsx` on a TypeScript file** — no CLI to learn, no server to run
-* Your terminal, your Docker, your git. **100% local** by default.
-* Every init prompt has a `--flag`, so the setup is CI-scriptable too
-* `init` refuses to overwrite an existing `.sandcastle/` — new template → fresh repo
 
 </v-clicks>
 
@@ -173,25 +173,19 @@ at the end. Right now I only want the shape: initialise once, then run a script.
 -->
 
 
-
+ 
 ---
 
-## Anatomy of a run
+## Anatomy of a single run
 
 ```mermaid {scale: 0.55}
 flowchart LR
   W["git worktree<br/>+ branch"] --> CP["copyToWorktree"]
   CP --> HW["host.onWorktreeReady"]
   HW --> SB["sandbox up"]
-  SB --> HK["host + sandbox<br/>onSandboxReady"]
-  HK --> PR["prompt resolve<br/>args, shell, built-ins"]
-  PR --> AG["agent iterations"]
-  AG --> AG
-  AG --> CS["completion signal<br/>or maxIterations"]
-  CS --> SE["capture session"]
-  SE --> CO["collect commits"]
-  CO --> MG["merge / keep branch"]
-  MG --> TD["teardown"]
+  SB --> HK["onSandboxReady"]
+  HK --> PR["Run agent"]
+  PR --> TD["teardown"]
 ```
 
 * Hooks let you `npm install`, copy secrets, apt-get — *before* the agent starts.
@@ -227,15 +221,15 @@ seconds rather than after twenty minutes of confused agent.
 
 ## How is information passed between stages?
 
-Five channels — and **conversation context is not one of them** by default.
 
-| Channel | Direction | Shape |
-|---|---|---|
-| `promptArgs` placeholders | orchestrator → agent | strings, substituted on the host |
-| Shell expansion in prompt | repo → agent | stdout of a command, run **in the sandbox** |
-| `Output.object()` | agent → orchestrator | tag + Zod-validated JSON, **typed** |
-| Git commits / branches | agent → agent | the actual code |
-| `resume()` / `fork()` | agent → agent | the session JSONL itself |
+| Direction                  | Channel | Shape |
+|----------------------------|---|---|
+| orchestrator → agent       | `promptArgs` placeholders | strings, substituted on the host |
+| agent → orchestrator       | `Output.object()` | tag + Zod-validated JSON, **typed** |
+| agent → agent same sandbox | the actual code |
+| agent → agent              | Git commits / branches | the actual code |
+
+**conversation context is not one of them** by default.
 
 <!--
 Once you have more than one agent, the interesting question is how they talk to each
@@ -263,7 +257,7 @@ agent's head, it's gone.
 
 ---
 
-## Passing information: the three prompt mechanisms
+## Passing information: prompt args
 
 ````md
 # ISSUES
@@ -342,89 +336,9 @@ sense — you're asking a question, not running a work loop.
 -->
 
 
-
 ---
-
-## Intermezzo: what is a `git worktree`?
-
-[//]: # TODO, put these  slides in their own file ()
-[//]: # TODO, clarify with a image showing two folders on 2 different branches()
-
-[//]: # TODO, maybe show:
-```
-main/.git    drwxr-xr-x   ← real directory
-feat/.git    -rw-r--r--   ← a 192-byte *file*
-
-The file contains one line:
-
-gitdir: /…/main/.git/worktrees/feat
-
-That's a "gitlink" — a pointer. Git reads it and redirects to the named directory.
-
-What's in the main repo's .git/
-
-COMMIT_EDITMSG  config  description  HEAD  hooks/  index  info/  logs/  objects/  refs/  worktrees/
-
-Normal stuff, plus worktrees/ — one subdirectory per linked worktree.
-
-What's in .git/worktrees/feat/
-```
-
-**The problem:** one clone = one folder = **one branch at a time**.
-
-To touch another branch you `git switch` — and your files change underneath you. Uncommitted work? Stash it first.
-
-<v-click>
-
-**A worktree is a second folder on disk, checked out on a different branch, belonging to the same repo.**
-
-```mermaid {scale: 0.52}
-flowchart TB
-  subgraph AFTER["one repository, three folders"]
-    direction LR
-    R2["my-repo/<br/><b>main</b>"]
-    R3["my-repo-issue-42/<br/><b>issue-42</b>"]
-    R4["my-repo-issue-43/<br/><b>issue-43</b>"]
-  end
-  H["same commits · same branches · same remote"] -.- AFTER
-```
-
-</v-click>
-
-<!--
-Quick intermezzo, because the next slide does not land unless this one does. Worktrees are
-a git feature a lot of people have simply never had a reason to use, so let's do it
-properly.
-
-Start from the thing you already know. A clone gives you one folder. That folder is on one
-branch. If you want to work on a different branch, you switch — and the files in that
-folder are rewritten in place. If you had uncommitted work, you stash it first. One folder,
-one branch, always.
-
-That is a real constraint the moment you want two things happening at once. The old
-workaround was to clone the repo a second time — which downloads everything again, and then
-you have two repos that don't know about each other.
-
-A worktree is the proper answer. It is a second folder on your disk, checked out on a
-different branch, and it belongs to the same repository. Look at the diagram: three folders,
-three branches, all live at the same time — and one shared set of commits, branches and
-remote underneath them.
-
-So it is not a copy. Nothing is downloaded, nothing is duplicated. Creating one is
-essentially instant, and you can throw it away just as cheaply.
--->
-
-
-
+src: ./worktree-intermezzo.md
 ---
-
-## `git worktree` in practice
-
-```bash
-git worktree add ../my-repo-issue-42 sandcastle/issue-42   # new folder, that branch
-git worktree list                                          # show them all
-git worktree remove ../my-repo-issue-42                    # tidy up
-```
 
 <v-clicks>
 
@@ -489,6 +403,7 @@ flowchart LR
 * `Promise.allSettled` → one crashed agent does not cancel its siblings
 * `copyToWorktree: ["node_modules"]` to skip a cold install per worktree
 * Dirty worktree on close is **preserved on disk**, not deleted
+  * Can explore individuals work easily
 
 </v-clicks>
 

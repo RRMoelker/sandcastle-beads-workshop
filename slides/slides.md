@@ -28,6 +28,9 @@ src: ./slides/sandcastle/index.md
 src: ./slides/demo.md
 ---
 
+---
+src: ./slides/workshop.md
+---
 
 
 ---
