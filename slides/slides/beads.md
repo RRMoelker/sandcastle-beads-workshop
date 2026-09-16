@@ -81,12 +81,26 @@ TODO
 
 ## What Beads provides
 
-Started by **Steve Yegge**.
+Started by **Steve Yegge**. [Intro in podcast](https://youtu.be/s96O9oWI_tI?si=aTmutpF9yzc4m_dG&t=1800)
 
 <v-clicks>
 
 - Go
-- 
+- Can be used in your agent apart from Sandcastle
+- Everything an AI needs
+  - Queried
+  - Audit trail
+  - Provendence
+  - Parent, children, dependencies, epics
+  - Priority
+- "File and forget"
+- Dynamic context
+  - Wrt. static context from agent.md, coding standards, etc
+- Beads working on now
+  - Session to session memories
+    - "Prevent 50 first dates"
+  - Not for future work
+  - Git is used for past work
 - Temporal not good enough 
 - Replaces the TODO list with **Beads issues**
 - Issues written into **JSONL** lines

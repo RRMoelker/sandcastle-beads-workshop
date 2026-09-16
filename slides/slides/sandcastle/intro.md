@@ -4,14 +4,22 @@ layout: section
 
 # Why SandcastleAI
 
-
-
 ---
 
 1. Permission nag or `--dangerously-skip-permissions`
 2. Orchestrating your workflow is pretty clearly the next step up.
+   1. Teams
+   2. Code review
+   3. "better at evaluating than writing"<sup>[1]</sup>
+3. Keep context low
 
 TODO, add image of a prompt injection. Or typo squating supply chain attack.
+
+<div class="mt-4 pt-2 border-t border-gray-500/30 text-xs opacity-60">
+
+[1] Steve Yegge, Beyond Instructions podcast — <a href="https://youtu.be/s96O9oWI_tI?si=tLSN15ZAhhYRbare&t=1046" target="_blank">youtu.be/s96O9oWI_tI</a>
+
+</div>
 
 <!-- Why use sandcastle?
 Because you either get way to many nags, or have to accept nearly unacceptable risks.
@@ -326,6 +334,29 @@ sense — you're asking a question, not running a work loop.
 ---
 
 ## Intermezzo: what is a `git worktree`?
+
+[//]: # TODO, put these  slides in their own file ()
+[//]: # TODO, clarify with a image showing two folders on 2 different branches()
+
+[//]: # TODO, maybe show:
+```
+main/.git    drwxr-xr-x   ← real directory
+feat/.git    -rw-r--r--   ← a 192-byte *file*
+
+The file contains one line:
+
+gitdir: /…/main/.git/worktrees/feat
+
+That's a "gitlink" — a pointer. Git reads it and redirects to the named directory.
+
+What's in the main repo's .git/
+
+COMMIT_EDITMSG  config  description  HEAD  hooks/  index  info/  logs/  objects/  refs/  worktrees/
+
+Normal stuff, plus worktrees/ — one subdirectory per linked worktree.
+
+What's in .git/worktrees/feat/
+```
 
 **The problem:** one clone = one folder = **one branch at a time**.
 
