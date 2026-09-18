@@ -1,6 +1,10 @@
 ## Sandcastle templates
 
-There are a couple of defaults to choose from, each `npx @ai-hero/sandcastle init .` scaffolds a `.sandcastle/main.mts` orchestration script plus prompt files.
+There are a couple of defaults to choose from
+
+* `npx @ai-hero/sandcastle init .`, scaffolds:
+  * `.sandcastle/main.mts` orchestration script
+  * plus prompt files
 
 <!--
 Source: https://github.com/mattpocock/sandcastle/tree/main/src/templates
@@ -24,7 +28,7 @@ flowchart LR
   end
 ```
 
-* Prompt is empty boilerplate.
+* Prompt is empty boilerplate
 
 <!--
 Bare scaffold — write your own prompt and orchestration.
@@ -50,7 +54,7 @@ flowchart LR
   end
 ```
 
-* Prompt reads the next issue via `bd ready --json`.
+* Prompt reads the next issue via `bd ready --json`
 
 <!--
 Picks issues one by one and closes them.
@@ -63,7 +67,7 @@ maxIterations: 3+, branchStrategy: merge-to-head — each iteration works one is
 
 ## sequential-reviewer
 
-```mermaid
+```mermaid {scale: 0.8}
 flowchart LR
   A(["main.ts"]) --> B["implementer"]
   IP[/"implement-prompt.md"/] -.-> B
@@ -79,7 +83,7 @@ flowchart LR
   end
 ```
 
-* Each phase is still a **new Claude session** — implementer and reviewer don't share conversation context, only the branch's files/commits.
+* Each phase is still a **new Claude session** — implementer and reviewer don't share conversation context, only the branch's files/commits
 
 <!--
 Implements issues one by one, with a code review step after each.

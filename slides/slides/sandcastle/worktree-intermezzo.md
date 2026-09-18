@@ -1,5 +1,6 @@
 ---
 layout: section
+hideInToc: true
 ---
 
 How is code separated from each other?
@@ -14,9 +15,9 @@ How is code separated from each other?
 
 one clone = one folder = **one branch at a time**.
 
-* To touch another branch you `git switch` — and your files change underneath you. 
-  * Uncommitted work? Stash it first.
-  * Does not work with parallel work.
+* To touch another branch you `git checkout` — and your files change underneath you
+  * Uncommitted work? Stash it first
+  * Does not work with parallel work
 
 
 
@@ -64,31 +65,6 @@ remote underneath them.
 So it is not a copy. Nothing is downloaded, nothing is duplicated. Creating one is
 essentially instant, and you can throw it away just as cheaply.
 -->
-
----
-
-[//]: # TODO, clarify with a image showing two folders on 2 different branches()
-
-[//]: # TODO, maybe show:
-```
-main/.git    drwxr-xr-x   ← real directory
-feat/.git    -rw-r--r--   ← a 192-byte *file*
-
-The file contains one line:
-
-gitdir: /…/main/.git/worktrees/feat
-
-That's a "gitlink" — a pointer. Git reads it and redirects to the named directory.
-
-What's in the main repo's .git/
-
-COMMIT_EDITMSG  config  description  HEAD  hooks/  index  info/  logs/  objects/  refs/  worktrees/
-
-Normal stuff, plus worktrees/ — one subdirectory per linked worktree.
-
-What's in .git/worktrees/feat/
-```
-
 
 
 ---

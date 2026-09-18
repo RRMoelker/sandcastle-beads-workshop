@@ -23,8 +23,9 @@ src: ./slides/intro.md
 src: ./slides/sandcastle/index.md
 ---
 
-[//]: # (src: ./slides/beads.md)
-
+---
+src: ./slides/beads.md
+---
 
 
 ---

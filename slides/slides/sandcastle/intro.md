@@ -7,7 +7,7 @@ layout: section
 ---
 
 1. Permission nag or `--dangerously-skip-permissions`
-2. Orchestrating your workflow is pretty clearly the next step up.
+2. Orchestrating multiple agents = next leap
    1. Teams
    2. Code review
    3. "better at evaluating than writing"<sup>[1]</sup>
@@ -38,42 +38,35 @@ Because you either get way to many nags, or have to accept nearly unacceptable r
 </v-clicks>
 
 
-
----
-layout: section
----
-
-# Sandcastle intro
-
-<!--
-So that's the problem. Now let's look at one answer to it.
-
-For the next twenty minutes I want to build up a mental model of Sandcastle, piece by
-piece: what it is, what happens when you press go, how work gets split up, how it gets
-back together, and where you can actually see what happened. After that we look at the
-five templates it ships with, and then we run one live.
--->
-
-
-
 ---
 
 ## What is Sandcastle?
 
-> "Orchestrate sandboxed coding agents in TypeScript with `sandcastle.run()`"
-
 <v-clicks>
 
-* **Matt Pocock** (Total TypeScript / AI Hero) — public since **March 2026**, MIT, ~8k ⭐
-* `npm i -D @ai-hero/sandcastle` — we are on **v0.12.0**
-* A configurable framework. Not a platform: 
-  * no UI
-  * no daemon 
-  * no cloud account
-* Three promises:
-  1. You invoke agents with a single `sandcastle.run()`
-  2. Sandcastle sandboxes the agent with a configurable **branch strategy**
-  3. The commits made on the branches get **merged back**
+* **Matt Pocock** — public since **March 2026**, MIT, ~8k ⭐
+* `npm i -D @ai-hero/sandcastle`
+* "Orchestrate sandboxed coding agents in TypeScript with `sandcastle.run()`"
+
+<div class="grid grid-cols-2 gap-4 mt-4 mb-4">
+<div>
+
+* Agent workflow
+* Sandboxing
+* Code isolation & merging
+* A configurable framework. Not a platform
+
+</div>
+<div>
+
+
+
+* no UI
+* no daemon
+* no cloud account
+
+</div>
+</div>
 
 </v-clicks>
 
@@ -147,12 +140,11 @@ npx tsx .sandcastle/main.mts      # AFK from here
 
 <v-clicks>
 
-* One-time: scaffold `.sandcastle/`, build the image, drop a token in `.env`
-* Then it is just **`tsx` on a TypeScript file** — no CLI to learn, no server to run
+* One-time: scaffold `.sandcastle/`, build the image, drop auth tokens in `.env`
+* Step-by-step setup: see the demo at the end
 
 </v-clicks>
 
-<div class="mt-4 text-sm opacity-70">Step-by-step setup: see the demo at the end.</div>
 
 <!--
 Two commands. The first one you run once per repo: it asks you four questions — which
@@ -188,8 +180,11 @@ flowchart LR
   PR --> TD["teardown"]
 ```
 
-* Hooks let you `npm install`, copy secrets, apt-get — *before* the agent starts.
-* Fail fast: a non-zero hook or shell expression kills the run.
+* Hooks let you
+  * `npm install`
+  * copy secrets
+  * apt-get *before* the agent starts
+  * `copyToWorktree: ["node_modules"]` to skip a cold install per worktree
 
 <!--
 So what actually happens when you call run()? This is the whole lifecycle, and it's worth
@@ -259,6 +254,8 @@ agent's head, it's gone.
 
 ## Passing information: prompt args
 
+
+*implementer-prompt.md*
 ````md
 # ISSUES
 !`gh issue list --state open --label Sandcastle --json number,title,body`
@@ -266,6 +263,7 @@ agent's head, it's gone.
 Work on issue #{{TASK_ID}} — "{{ISSUE_TITLE}}" on branch {{BRANCH}}.
 You are on {{SOURCE_BRANCH}}; diff against {{TARGET_BRANCH}}.
 ````
+
 
 <!--
 Here are three of those channels in one small prompt file — this is close to what the
@@ -386,6 +384,8 @@ template.
 
 ## How is code worked on independently?
 
+*Back to Sandcastle*
+
 ```mermaid {scale: 0.6}
 flowchart LR
   H[("host repo<br/>main")] --> W1["worktree<br/>issue-1"]
@@ -399,11 +399,10 @@ flowchart LR
 <v-clicks>
 
 * One **git worktree** per branch under `.sandcastle/worktrees/`, bind-mounted into its own container
-* Agents never see each other's files — conflicts are deferred to the merge phase
-* `Promise.allSettled` → one crashed agent does not cancel its siblings
-* `copyToWorktree: ["node_modules"]` to skip a cold install per worktree
-* Dirty worktree on close is **preserved on disk**, not deleted
   * Can explore individuals work easily
+* Agents never see each other's files — conflicts are deferred to the merge phase
+  * (Outside of "head" strategy)
+
 
 </v-clicks>
 
@@ -440,17 +439,12 @@ show live.
 
 ## How is code merged? Branch strategies
 
-| Strategy | What happens | Merge |
-|---|---|---|
-| `head` | Agent writes **straight into your working dir** | none needed |
-| `merge-to-head` | Temp branch in a worktree, `git merge` back to HEAD, branch deleted | **automatic, deterministic** |
-| `branch` | Commits land on a branch you name, worktree kept | **none — you decide** |
-
 <v-clicks>
 
-* Default: `head` for bind-mount (Docker/Podman), `merge-to-head` for isolated (Vercel)
-* `head` is fast but gives up the safety net — that is the "no sandbox for your git" mode
-* `branch` is what the parallel templates use, so an **agent** can do the merging
+* `head`: agent writes **straight into your working dir** — no worktree, no merge needed
+* `merge-to-head`: temp branch in a worktree, `git merge` back to HEAD, branch deleted — **automatic, deterministic**
+* `branch`: commits land on a branch you name, worktree kept — **no merge — you decide**
+    * `branch` is what the parallel templates use, so an **agent** can do the merging
 
 </v-clicks>
 
@@ -474,6 +468,12 @@ Note the defaults are per provider, and they differ: Docker and Podman default t
 the isolated providers default to merge-to-head. So the same script can behave differently
 depending on which sandbox you picked, unless you set the strategy explicitly. Which I'd
 recommend you always do.
+
+And this isn't just a convention — it's enforced in the types and at runtime. Bind-mount and
+no-sandbox providers accept all three values. Isolated providers only accept merge-to-head or
+branch: head means "write straight to the host working directory", and an isolated sandbox
+has no bind-mounted working directory to write to. Try it anyway and Sandcastle throws before
+the run even starts: "head branch strategy is not supported with isolated providers".
 -->
 
 
@@ -510,9 +510,7 @@ recommend you always do.
 
 <v-clicks>
 
-* So: yes, automatic — but in the parallel templates a *model* is resolving your conflicts
 * Only branches that actually produced commits are handed to the merger
-* My run: "Branches merged", no manual merge needed. The sequential run needed a manual `git merge`.
 
 </v-clicks>
 
@@ -550,18 +548,14 @@ branch strategy of that template, but it's a surprise the first time.
 
 ## Does the reviewer share the container?
 
-| Template | Reviewer runs in | Sandbox reused? |
-|---|---|---|
-| `sequential-reviewer` | same container as implementer | ✅ `createSandbox()` |
-| `parallel-planner-with-review` | same container as its implementer, one per issue | ✅ per branch |
-| Separate `run()` calls | brand-new container each time | ❌ |
+| Template | Sandbox reused? |
+|---|---|
+| `sequential-reviewer` | ✅|
+| `parallel-planner-with-review` | ✅ per branch |
 
 <v-clicks>
 
-* `createSandbox()` keeps the container **warm**: deps installed, build cache intact, commits accumulate on one branch
-* `sandbox.exec("npm test")` lets *your code* gate the review without spending an agent
 * But the reviewer is always a **new agent session** — shared filesystem, not shared memory
-* Cost of a fresh `run()`: container start + `npm install`, every single time
 
 </v-clicks>
 
@@ -594,18 +588,16 @@ branch, no shared memory. It reads the diff, not the implementer's reasoning.
 
 ## Sandbox providers
 
-| Provider | Type | Pro | Con |
-|---|---|---|---|
-| **Docker** | bind-mount | ubiquitous, fast, local, free | Desktop licence, daemon runs as root |
-| **Podman** | bind-mount | rootless, daemonless, drop-in | less common on macOS, SELinux quirks |
-| **Vercel** | isolated (Firecracker µVM) | real VM isolation, scales past your laptop, no local Docker | costs money, network round-trips, copy in/out |
-| **Daytona** | isolated | managed dev-env infra | extra vendor + account |
-| **no-sandbox** | none 😬 | zero setup, use for `interactive()` | it's just an agent on your machine |
+| Provider | Pro | Con                                  |
+|---|---|--------------------------------------|
+| **Docker** | ubiquitous, fast, local, free | Desktop licence, daemon runs as root |
+| **Podman** | rootless, daemonless, drop-in | SELinux quirks                       |
+| **Vercel** | real VM isolation, scales past your laptop, no local Docker | costs money, **network round-trips** |
+| **no-sandbox** | zero setup, use for `interactive()` | it's just an agent on your machine   |
 
 <v-clicks>
 
-* Bind-mount = worktree mounted in, **no file sync**. Isolated = provider copies code in and out.
-* Custom provider = ~60 lines: `exec`, `close`, `copyFileIn/Out`, `worktreePath`
+* Custom provider: `exec`, `close`, `copyFileIn/Out`, `worktreePath`
 
 </v-clicks>
 
@@ -638,8 +630,6 @@ close, copy a file in, copy a file out. That's the whole contract.
 ---
 
 ## Issue tracker providers
-
-`init` asks: **GitHub Issues**, **Beads**, or **Custom**. It only wires up three commands.
 
 | | list | view | close |
 |---|---|---|---|
@@ -732,7 +722,8 @@ anonymous ones is the difference between debugging and archaeology.
 
 ## Where do I turn on verbose logging?
 
-In `.sandcastle/main.mts`, as an option on **every `run()`** — there is no global switch, no config file, no env var.
+* Default with no `logging` key at all: a file per named run, `.sandcastle/logs/<name>.log`
+* In `.sandcastle/main.mts`, as an option on **every `run()`** — there is no global switch, no config file, no env var
 
 ```ts {all|2-5,10,16}
 // .sandcastle/main.mts
@@ -779,7 +770,7 @@ on the run calls you make against that sandbox. Easy to miss.
 
 ## Verbose: file vs stdout
 
-<div class="grid grid-cols-2 gap-4 text-sm">
+<div class="grid grid-cols-2 gap-4 text-sm mt-4">
 <div>
 
 ### `type: "file"` (default)
@@ -792,9 +783,6 @@ logging: {
   onAgentStreamEvent: (e) => log(e),
 }
 ```
-
-* `path` is **required** once you write it yourself — you lose the auto-generated name
-* Raw JSON interleaved with the readable log
 
 </div>
 <div>
@@ -809,15 +797,12 @@ logging: {
 ```
 
 * Interactive TUI in your terminal
-* Raw lines interleave with the UI — messy, but it's **live**
-* No `onAgentStreamEvent` here
 
 </div>
 </div>
 
 <v-clicks>
 
-* Default with no `logging` key at all: a file per named run, `.sandcastle/logs/<name>.log`
 * Use `verbose` to debug a **stuck or weird** agent — not for everyday runs
 
 </v-clicks>
@@ -844,114 +829,6 @@ output you saw on the previous slide.
 
 
 
----
-
-## Beyond the log file
-
-<v-clicks>
-
-* `result.stdout`, `result.commits`, `result.branch`, `result.logFilePath` — programmatic
-* `iterations[].usage` — input / output / cache-read tokens per iteration
-* Session JSONL captured back to the host → `claude --resume <id>` **on your machine**
-  * subagent transcripts captured too
-* `onAgentStreamEvent` (file mode) forwards `text` / `toolCall` / `raw` events to your own
-  observability system — a throwing callback can't kill the run, errors are swallowed
-
-</v-clicks>
-
-<!--
-Logs are for humans. There are three other things you can get at, and they're more useful
-than the log file for anything ongoing.
-
-First, the result object. Commits, branch, stdout, the log file path — all just values in
-your TypeScript. That's how the templates decide which branches are worth merging: they
-check whether commits is empty.
-
-Second, token usage, per iteration: input, output, and cache reads separately. If you want
-to know what an overnight run cost you, it's right there, no scraping required.
-
-Third — and this is my favourite feature in the whole tool — the session transcript is
-captured out of the sandbox back onto your machine, with the paths rewritten so your local
-tooling accepts it. Which means after an unattended run you can type claude --resume, with
-the session id, and drop straight into the conversation the agent was having inside the
-container. You can ask it what it was thinking. Subagent transcripts come back too.
-
-And if you have real observability infrastructure, onAgentStreamEvent hands you every text
-chunk, tool call and raw line as it happens, so you can push it wherever you like.
-Sensibly, if your callback throws, Sandcastle swallows it — a broken log forwarder can't
-kill a twenty-minute run.
--->
-
-
-
----
-
-## Deterministic vs. prompt
-
-<div class="grid grid-cols-2 gap-4 text-sm">
-<div>
-
-### Deterministic (TypeScript)
-
-* The loop, the fan-out, the retries
-* Worktree + branch creation
-* `merge-to-head` `git merge`
-* Which model, which effort
-* Hooks, `copyToWorktree`, env
-* Schema validation of output
-* Commit collection
-* Timeouts & cancellation
-
-</div>
-<div>
-
-### Prompt (the model decides)
-
-* Which issues are *blocked*
-* How to break work down
-* All the actual code
-* Conflict resolution (merger agent)
-* Whether the review passes
-* When to emit `COMPLETE`
-* Whether to close a ticket
-
-</div>
-</div>
-
-<v-clicks>
-
-* The boundary is **yours to move** — e.g. replace the merger agent with plain `git merge`, or gate a review behind `sandbox.exec("npm test")`
-* Rule of thumb: if it can be a `git` command, don't make it a prompt
-
-</v-clicks>
-
-<!--
-This is the slide I'd put on the wall. Everything we've covered, sorted into two columns:
-what is guaranteed, and what is hoped for.
-
-On the left, real code with real guarantees. The loop, the fan-out, the retries. Worktrees
-and branches. The merge-to-head git merge. Model and effort selection. Hooks and
-environment. Schema validation. Timeouts and cancellation. These behave the same way on
-Tuesday as they did on Monday.
-
-On the right, everything a model decides. Which issues are blocked. How to break the work
-down. All of the code, obviously. Conflict resolution, when you're using a merger agent.
-Whether a review passes. When to declare itself done. Whether to close a ticket.
-
-Two observations. First, the right-hand column is where all your variance lives — so when
-a run goes strange, that's the column to look in.
-
-Second, and this is the actual point: the boundary between these columns is not fixed. It
-is a design decision you make, and Sandcastle lets you move it. You can delete the merger
-agent and call git merge yourself. You can gate a review on sandbox.exec running the test
-suite rather than asking a model whether the code is good. You saw the same move earlier
-with Beads versus GitHub: bd ready answers "what's unblocked" deterministically, where the
-GitHub path asks a model to infer it.
-
-My rule of thumb: if it can be a git command, don't make it a prompt. Every item you move
-from right to left is variance you stop paying for.
--->
-
 
 
 ---
@@ -964,13 +841,12 @@ from right to left is variance you stop paying for.
 | `completionSignal` | `<promise>COMPLETE</promise>` | burning iterations after it's done |
 | `idleTimeoutSeconds` | `600` | a genuinely stuck agent → **fail** |
 | `completionTimeoutSeconds` | `60` | a hanging child process → **succeed + warn** |
-| `timeouts.*Ms` | 10–60s | wedged git / copy steps |
 | `signal: AbortSignal` | — | Ctrl-C; worktree preserved |
 
 <v-clicks>
 
 * `completionSignal` is a **convention you write into your prompt** — the engine never injects it
-* Sandcastle passes `--dangerously-skip-permissions` by default… which is exactly why the container matters. `permissionMode` can override it.
+* Sandcastle passes `--dangerously-skip-permissions` by default… which is exactly why the container matters. `permissionMode` can override it
 
 </v-clicks>
 

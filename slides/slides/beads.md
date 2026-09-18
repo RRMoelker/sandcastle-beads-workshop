@@ -2,115 +2,71 @@
 layout: section
 ---
 
+AI issue tracking
 # Beads
 
 ---
 
-## Beads: the story
+## Why beads?
 
-> "Coding agents *always* start off strong. Give an agent a modestly meaty task, and it will declare:
->
-> 'Oh wow, this is a big project, I'm going to break it into **six phases** and create a markdown plan.'"
-
-<v-clicks>
-
-1. Phase 1
-2. Phase 2
-3. Phase 3
-4. Phase 4
-5. Phase 5
-6. Phase 6
-
-</v-clicks>
-
-<!--
-Source: https://steve-yegge.medium.com/introducing-beads-a-coding-agent-memory-system-637d7d92514a
--->
-
----
-
-## Phase 1
-
-The agent works through it. ✅ Done.
-
-<br/>
-
-Confidence is high. The plan is holding up.
-
-<!--
-TODO
--->
-
----
-
-## Phase 2
-
-Also done. ✅
-
-<br/>
-
-Then... several **compactions / restarts** happen, which resets the agent's memory.
-
-<!--
-TODO
--->
-
----
-
-## Phase 3
-
-The agent wakes up. It has mostly **forgotten where it came from**.
-
-It plops in your video cassette, reads about "phase 3", and declares:
-
-> "Oh wow, this is a big project, I'm going to break it into **five phases** and create a markdown plan."
-
-<br/>
-
-...and the fractal collapse repeats, nested sub-phases deep, until:
-
-> "Congratulations, the system is DONE! 🎉 Let's start manual testing! 🚀"
-
-— completely unaware the original outer phases are still unfinished. Hundreds of half-built markdown plans pile up in the repo.
-
-<!--
-TODO
--->
+* Build for agent use
+* Keep context small
+* Handle compaction
+* Allow for TODO dependencies to spawn during work
 
 ---
 
 ## What Beads provides
 
-Started by **Steve Yegge**. [Intro in podcast](https://youtu.be/s96O9oWI_tI?si=aTmutpF9yzc4m_dG&t=1800)
-
 <v-clicks>
 
 - Go
 - Can be used in your agent apart from Sandcastle
-- Everything an AI needs
-  - Queried
+- "Everything an AI needs"
   - Audit trail
-  - Provendence
-  - Parent, children, dependencies, epics
+  - Parent, child, blocks, supersedes, discovered-from and more 
+  - Epics
   - Priority
-- "File and forget"
-- Dynamic context
-  - Wrt. static context from agent.md, coding standards, etc
-- Beads working on now
+- Fast
+  
+</v-clicks>
+
+---
+layout: image-right
+image: /demo-large/m-beads-ready.png
+backgroundSize: contain
+---
+
+## Use case 
+
+<v-clicks>
+
+- Replaces the TODO list with **Beads issues**
+  - "Temporal not good enough" (Steve Yegge)
+- Add dynamic context to each query
+  - `bd ready`
+- Beads ticket time scope
   - Session to session memories
     - "Prevent 50 first dates"
-  - Not for future work
+  - Not for far long term planning
   - Git is used for past work
-- Temporal not good enough 
-- Replaces the TODO list with **Beads issues**
+
 - Issues written into **JSONL** lines
+
+</v-clicks>
+
+
+
+---
+
+## Beads misc
+
+<v-clicks>
+
+- Started by **Steve Yegge**. [Intro in podcast](https://youtu.be/s96O9oWI_tI?si=aTmutpF9yzc4m_dG&t=1800)
 - Multi-agent **parallel support** (Dolt backend)
-- Beads are the grapes on a vine — or beads on a chain 📿
-- `bd` cli also stands for "**b**ug **d**atabase"
-- Born out of large vibe-coding projects
-- Work that gets too complex gets flagged **"rewrite only"**
-- Agents drift into "**executive mode**" near the end of the context window and take shortcuts to a solution
-- `beads-ui` to see what is happening.
+- Beads are the grapes on a vine — or beads on a chain
+- `beads-ui` to see what is happening
 
 </v-clicks>
 
@@ -119,7 +75,7 @@ TODO: find images — beads logo? generic AI images? something specific to the s
 -->
 ---
 
-## Testimonials
+## Testimonial :)
 
 <div class="text-sm">
 
@@ -137,6 +93,7 @@ TODO: find images — beads logo? generic AI images? something specific to the s
 
 </div>
 
+
 <!--
 Full text: see .local/slide_input.md, Appendix A
 -->
@@ -151,12 +108,11 @@ Full text: see .local/slide_input.md, Appendix A
 
 <v-clicks>
 
-- The orchestrator owns the beads database — it is the shared memory
+- In git: `.beads/issues.jsonl` 
 - Sandcastle fans out: each agent gets its own **git worktree in its own sandbox**
 - Workers pull their assignment from the *same* graph: `bd ready --claim --json`
 - `--claim` is **atomic** — first worker wins, no two agents take the same bead
 - Work discovered mid-task goes straight back in as a `discovered-from` bead
-- Fan-in: the orchestrator sees progress live, no merge step
 
 </v-clicks>
 
@@ -221,9 +177,9 @@ deletions and get duplicated work.
 
 <v-clicks>
 
-1. **Shared Dolt server** (recommended) — `dolt sql-server` on the host, workers connect over a bind-mounted unix socket or `host.docker.internal`. Give the worker a minimal server-mode `.beads/` so discovery succeeds. Run workers `--readonly` when they only read, `--sandbox` so they never push.
-2. **Real Dolt sync** — `bd bootstrap` from the Dolt remote at sandbox start, `bd dolt push` at the end. Needs `dolt` in the image and a reachable remote. Right choice for off-machine or untrusted sandboxes.
-3. **Orchestrator writes only** — workers never touch `bd`; sandcastle's structured output goes back to the host, which updates the graph. Least machinery, zero holes in the sandbox.
+1. **Shared Dolt server** (recommended) — `dolt sql-server` on the host
+   1. workers connect over a bind-mounted unix socket or `host.docker.internal`
+   2. Give the worker a minimal server-mode `.beads/`
 
 </v-clicks>
 

@@ -89,9 +89,11 @@ package.json
 
 ## Sandcastle & beads review
 
-* Geen controle na `npm run sandcastle`
-  * Eerste planner maakte niet meerdere issues maar 1 grote.
-* Interuptable na elke planner iteratie
+<v-clicks>
+
+* Out of the box
+  * No/limited control `npm run sandcastle`
+  * interruptable after every iteration
 * Up to dev to code flow
   * Non blocking flows (now waiting on planner and merge)
   * Put human back in the loop
@@ -100,6 +102,22 @@ package.json
 * From dev time constraint -> Token & runtime constraint
   * Docker overhead and tokens/s blockers
 
-[//]: # (TODO, inject quote slide: "The average person only uses 10% their budget. Here at Dignitas, we use the full budget!")
-[//]: # (me, now as attribution)
+</v-clicks>
+
+
+
+---
+layout: quote
+hideInToc: true
+---
+
+# "The average person only uses 10% their budget. Here at Dignitas, we use the full budget!"
+
+<div class="mt-8 text-lg opacity-60">
+
+— me, just now
+
+</div>
+
+<img src="/demo-large/i-2-out-of-tokens.png" class="mt-8 w-2/3 rounded shadow" />
 
