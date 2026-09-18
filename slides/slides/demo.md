@@ -13,10 +13,12 @@ layout: section
 * Start docker engine
 * `git init`
 * `npm init`
+* *git commit*
 * `npm install --save-dev @ai-hero/sandcastle`
 * `npx @ai-hero/sandcastle init` with
   * claude
   * template of choice
+* git commit
     
 <!--
 show repo after empty template init and show main code with github copilot.

@@ -8,9 +8,11 @@ Sandcastle
 
 * `git init`
 * `npm init`
+* *git commit*
 * `npm install --save-dev @ai-hero/sandcastle`
 * `npx @ai-hero/sandcastle init`
   * `cp .sandcastle/.env{.example,}`
+* *git commit*
 * Get token using `claude setup-token`
 * edit `.sandcastle/.env`: `CLAUDE_CODE_OAUTH_TOKEN=<token>`
 
