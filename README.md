@@ -3,5 +3,4 @@ Setup:
 * Go into slides directory
 * `npm i`
 * `npm run dev`
-* Open browser
-
+* Open link in browser
