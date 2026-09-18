@@ -1,6 +1,3 @@
----
-
----
 ## Why not sub agents
 
 ### Custom orchestration
@@ -18,7 +15,9 @@
 * Orchestration as prompt
 
 
+
 ---
+
 ## Take aways
 
 <v-clicks>
@@ -26,15 +25,27 @@
 * Sandcastle good for sandboxing
 * Worktrees great for parallel work
 * Beads good for short term work planning
-* My suggestion
-  * Normal work, Claude/OpenCode harnass with Beads Todos
-  * Sandcastle for vibe coding large projects
+* Out of the box, Sandcastle not great for every day work.
+
 </v-clicks>
+
+
+
+---
+
+## My suggestion
+* Normal work: Claude/OpenCode with Beads Todos. And baby sit.
+* Project work: Vibe with Sandcastle
+
+
 
 ---
 hideInToc: true
 ---
+
 # Thank you
+
+
 
 ---
 hideInToc: true
